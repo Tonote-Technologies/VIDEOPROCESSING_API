@@ -1,0 +1,43 @@
+{
+  "name": "tonote-video-processing-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "author": "abiodun samuel",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.19"
+  },
+  "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "aws-sdk": "^2.1311.0",
+    "axios": "^1.3.3",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "date-fns": "^2.29.2",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "express-async-handler": "^1.2.0",
+    "express-rate-limit": "^6.5.2",
+    "express-session": "^1.17.3",
+    "fluent-ffmpeg": "^2.1.2",
+    "handlebars": "^4.7.7",
+    "joi": "^17.6.0",
+    "jose": "^4.11.4",
+    "jsonwebtoken": "^9.0.0",
+    "moment": "^2.29.4",
+    "mongoose": "^6.5.2",
+    "mongoose-sequence": "^5.3.1",
+    "nodemailer": "^6.7.8",
+    "passport": "^0.6.0",
+    "passport-google-oauth20": "^2.0.0",
+    "socket.io": "^4.6.0",
+    "uuid": "^8.3.2"
+  }
+}

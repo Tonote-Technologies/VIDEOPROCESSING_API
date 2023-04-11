@@ -1,5 +1,5 @@
-import { Blob, Buffer } from "buffer";
-import { mkdir, open, writeFile } from "fs/promises";
+import { Buffer } from "buffer";
+import { mkdir, writeFile } from "fs/promises";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import AWS from "aws-sdk";

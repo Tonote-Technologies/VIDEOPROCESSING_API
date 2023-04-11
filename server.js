@@ -189,19 +189,17 @@ io.on("connection", (socket) => {
   });
 });
 
-mongoose.connection.once("open", () => {
-  httpServer.listen(process.env.PORT, () => {
-    console.log("Connected to MongoDB");
-    console.log(`Server running on port ${process.env.PORT}`);
-  });
+httpServer.listen(process.env.PORT, () => {
+  console.log("Connected to MongoDB");
+  console.log(`Server running on port ${process.env.PORT}`);
 });
 
-mongoose.connection.on("error", (err) => {
-  // console.log(err);
-  logEvents(
-    `${err.no}: ${err.code}\t${err.syscall}\t${err.hostname}`,
-    "mongoErrLog.log"
-  );
-});
+// mongoose.connection.on("error", (err) => {
+//   // console.log(err);
+//   logEvents(
+//     `${err.no}: ${err.code}\t${err.syscall}\t${err.hostname}`,
+//     "mongoErrLog.log"
+//   );
+// });
 
 app.use(errorHandler);

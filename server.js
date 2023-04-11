@@ -151,11 +151,11 @@ io.on("connection", (socket) => {
   });
 
  
-  socket.on("RECORDING_END_EVENT", (schedule_id, token) => {
-    console.log("schedule_id:");
+  socket.on("RECORDING_END_EVENT", () => {
     if (dataChunks[username] && dataChunks[username].length) {
-      saveData(dataChunks[username], videoFile, schedule_id, token);
+      saveData(dataChunks[username], videoFile, room,userToken);
       dataChunks[username] = [];
+      
     }
   });
 

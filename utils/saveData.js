@@ -1,11 +1,11 @@
 import { Buffer } from "buffer";
 import {Blob} from 'fetch-blob'
-import { mkdir, open, writeFile } from "fs/promises";
+import { mkdir, writeFile } from "fs/promises";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import AWS from "aws-sdk";
 import * as fs from "fs";
-// import axios from 'axios';
+import axios from 'axios';
 
 import { path } from "@ffmpeg-installer/ffmpeg";
 import ffmpeg from "fluent-ffmpeg";
@@ -21,50 +21,46 @@ const s3 = new AWS.S3({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 });
 
-// const sendEmail = (schedule_id, video_link, token) => {
-//   let data = { 
-//     schedule_id: schedule_id,
-//     video_file: video_link,
-//     token: token
-//   };
-//   // console.log(data);
-//   var theBaseUrl = 'https://staging.gettonote.com/api/v1/schedule-recording-session/'+data.schedule_id;
-//   var bearer = 'Bearer ' + data.token;
-
-//   const Api = axios.create({
-//     // baseURL: theBaseUrl,
-//     withCredentials: false,
-//     headers: {
-//       Accept: 'application/json',
-//       'Authorization': bearer,
-//       'Content-type': 'application/json',
-//       'Access-Control-Allow-Origin': 'true',
-//     },
-//   });
-//   Api.put(theBaseUrl, {
-//      video_recording_file: data.video_file,
-//     })
-//     .then(function (response) {
-//       console.log(response);
-//     })
-//     .catch(function (error) {
-//       console.log(error);
-//     });
-
-// }
-
-const saveToAWs = async (file, fileName, schedule_id, token) => {
+const saveToAWS = async (file, fileName, schedule_id, token) => {
   const params = {
     Bucket: process.env.AWS_BUCKET_NAME,
     Key: `${fileName}`,
     Body: fs.createReadStream(file),
   };
   s3.upload(params, function (s3Err, data) {
-    // sendEmail(schedule_id, data.Location, token)
     if (s3Err) throw s3Err;
     console.log(`File uploaded successfully at ${data.Location}`);
+    sendEmail(schedule_id, data.Location, token)
   });
 };
+
+const sendEmail = (schedule_id, video_link, token) => {
+
+  var theBaseUrl = 'https://staging.gettonote.com/api/v1/schedule-recording-session/'+schedule_id;
+  var bearer = 'Bearer ' + token;
+
+  const Api = axios.create({
+    withCredentials: false,
+    headers: {
+      Accept: 'application/json',
+      'Authorization': bearer,
+      'Content-type': 'application/json',
+      'Access-Control-Allow-Origin': 'true',
+    },
+  });
+  Api.put(theBaseUrl, {
+     video_recording_file: video_link,
+    })
+    .then(function (response) {
+      console.log(response.data.data.message);
+    })
+    .catch(function (error) {
+      console.log(error.response.data.data.error);
+    });
+
+}
+
+
 
 const emptyDirectory = async (dirPath, removeSelf) =>  {
   try { 
@@ -89,7 +85,6 @@ const emptyDirectory = async (dirPath, removeSelf) =>  {
   
 }
 
-
 export const saveData = async (data, videoFile, schedule_id, token) => {
   const fileName = `${videoFile}-${Date.now()}.mp4`;
   const tempFilePath = `${dirPath}/temp-${fileName}`;
@@ -102,10 +97,9 @@ export const saveData = async (data, videoFile, schedule_id, token) => {
       type: "video/webm",
     });
     const videoBuffer = Buffer.from(await videoBlob.arrayBuffer());
-
     await writeFile(tempFilePath, videoBuffer);
 
-    await ffmpeg(tempFilePath)
+    ffmpeg(tempFilePath)
       .outputOptions([
         "-c:v libx264",
         "-preset medium",
@@ -118,10 +112,8 @@ export const saveData = async (data, videoFile, schedule_id, token) => {
       ])
       .on("end", async () => {
         console.log(`*** File ${fileName} created`);
-        await saveToAWs(finalFilePath, fileName, schedule_id, token);
-        setTimeout(async () => {
-          await emptyDirectory(dirPath);
-        }, 2000);
+        await saveToAWS(finalFilePath, fileName, schedule_id, token);
+        await emptyDirectory(dirPath);
       })
       .save(finalFilePath);
   } catch (e) {

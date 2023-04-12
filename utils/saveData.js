@@ -17,6 +17,7 @@ const videoPath = join(__dirname, "../video");
 const dirPath = `${videoPath}/`;
 
 const s3 = new AWS.S3({
+  region: process.env.AWS_REGION,
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 });
@@ -27,10 +28,11 @@ const saveToAWS = async (file, fileName, schedule_id, token) => {
     Key: `${fileName}`,
     Body: fs.createReadStream(file),
   };
-  s3.upload(params, function (s3Err, data) {
+  s3.upload(params, function (s3Err,) {
     if (s3Err) throw s3Err;
-    console.log(`File uploaded successfully at ${data.Location}`);
-    sendEmail(schedule_id, data.Location, token)
+    let url = `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${fileName}`
+    console.log(`File URL: ${url}`);
+    sendEmail(schedule_id, url, token)
   });
 };
 
@@ -55,7 +57,7 @@ const sendEmail = (schedule_id, video_link, token) => {
       console.log(response.data.data.message);
     })
     .catch(function (error) {
-      console.log(error.response.data.data.error);
+      console.log("Error: ",error.response.data);
     });
 
 }
@@ -94,21 +96,30 @@ export const saveData = async (data, videoFile, schedule_id, token) => {
 
   try {
     const videoBlob = new Blob(data, {
-      type: "video/webm",
+      type: "video/mp4",
     });
     const videoBuffer = Buffer.from(await videoBlob.arrayBuffer());
-    await writeFile(tempFilePath, videoBuffer);
+    await writeFile(tempFilePath, videoBuffer).catch((e) => {
+      console.log("*** writeFile", e);
+      throw e;
+    });
 
     ffmpeg(tempFilePath)
       .outputOptions([
-        "-c:v libx264",
-        "-preset medium",
-        "-tune film",
-        "-crf 18",
-        "-vf scale=1280:720",
-        "-r 30",
-        "-b:v 1500k",
-        "-f mp4"
+        "-c:v",
+        "libvpx-vp9",
+        "-r",
+        "5",
+        "-crf",
+        "20",
+        "-b:v",
+        "0",
+        "-vf",
+        "scale=1200:720",
+        "-f",
+        "mp4",
+        "-preset",
+        "ultrafast",
       ])
       .on("end", async () => {
         console.log(`*** File ${fileName} created`);

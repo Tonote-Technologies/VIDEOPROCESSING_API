@@ -195,12 +195,6 @@ httpServer.listen(process.env.PORT, () => {
   console.log(`Server running on port ${process.env.PORT}`);
 });
 
-// mongoose.connection.on("error", (err) => {
-//   // console.log(err);
-//   logEvents(
-//     `${err.no}: ${err.code}\t${err.syscall}\t${err.hostname}`,
-//     "mongoErrLog.log"
-//   );
-// });
+
 
 app.use(errorHandler);

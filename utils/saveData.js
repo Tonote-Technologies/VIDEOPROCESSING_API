@@ -37,25 +37,17 @@ export const saveData = async (data, videoFile, schedule_id, token) => {
         return;
       }
       const fileUrl = data.Location;
-      console.log(`*** File ${fileName} uploaded to S3`);
-      console.log(`*** File URL: ${fileUrl}`);
+      // console.log(`*** File ${fileName} uploaded to S3`);
+      // console.log(`*** File URL: ${fileUrl}`);
 
       // Convert the video and save to S3
       const command = ffmpeg()
       .input(fileUrl)
       .outputOptions([
-        // "-c:v libx264",
-        // "-preset medium",
-        // "-tune film",
-        // "-crf 18",
-        // "-vf scale=1280:720",
-        // "-r 30",
-        // "-b:v 1500k",
-        // "-f webm"
         '-c:v', 'libvpx-vp9',
         '-crf', '30',
         '-b:v', '0',
-        '-vf', 'scale=-2:720', // -2:720 keeps aspect ratio and limits height to 720 pixels
+        '-vf', 'scale=1280:720', // -2:720 keeps aspect ratio and limits height to 720 pixels
         '-c:a', 'libopus',
         '-b:a', '96k',
         '-f', 'webm',
@@ -64,10 +56,10 @@ export const saveData = async (data, videoFile, schedule_id, token) => {
       ])
       .toFormat("webm")
       .on("error", function (err) {
-        console.log("*** saveData", err);
+        // console.log("*** saveData", err);
       })
       .on("end", async function () {
-        console.log(`*** File ${fileName} converted and saved to S3`);
+        // console.log(`*** File ${fileName} converted and saved to S3`);
         // Delete the original video from S3
         await s3
           .deleteObject({
@@ -75,7 +67,7 @@ export const saveData = async (data, videoFile, schedule_id, token) => {
             Key: fileName,
           })
           .promise();
-        console.log(`*** File ${fileName} deleted from S3`);
+        // console.log(`*** File ${fileName} deleted from S3`);
 
         // Perform any additional processing or save to database
         
@@ -98,7 +90,7 @@ export const saveData = async (data, videoFile, schedule_id, token) => {
         if (err) {
           console.log("*** saveData", err);
         } else {
-          console.log(`*** File converted-${fileName} uploaded`);
+          // console.log(`*** File converted-${fileName} uploaded`);
           let newfileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/converted_${fileName}`
           saveToDB(schedule_id, newfileUrl, token)
           console.log(`New File URL: ${newfileUrl}`);

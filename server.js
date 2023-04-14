@@ -142,7 +142,8 @@ io.on("connection", (socket) => {
     socket.to(room).emit(events.REMOVE, data);
   });
 
-  socket.on("RECORDING_START_EVENT", (data) => {
+  socket.on("RECORDING_CHUNK_EVENT", (data) => {
+    // console.log('File Received', data)
     if (dataChunks[username]) {
       dataChunks[username].push(data);
     } else {
@@ -152,6 +153,7 @@ io.on("connection", (socket) => {
 
  
   socket.on("RECORDING_END_EVENT", () => {
+    console.log("File Receiving End")
     if (dataChunks[username] && dataChunks[username].length) {
       saveData(dataChunks[username], videoFile, room,userToken);
       dataChunks[username] = [];
@@ -175,6 +177,13 @@ io.on("connection", (socket) => {
   socket.on('SHOW_FEED_BACK', () => {
     io.in(room).emit('SHOW_FEED_BACK');
   });
+
+  socket.on('SHOW_SESSION_TIME_ALERT', () => {
+    io.in(room).emit('SHOW_SESSION_TIME_ALERT');
+  });
+
+  // SHOW_SESSION_TIME_ALERT
+
   socket.on('SHOW_COMPLETE_SESSION_NOTICE', () => {
     socket.to(room).emit('SHOW_COMPLETE_SESSION_NOTICE');
   });

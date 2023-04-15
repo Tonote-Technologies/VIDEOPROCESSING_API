@@ -106,11 +106,9 @@ io.use((socket, next) => {
 io.on("connection", (socket) => {
   const room = socket.sessionRoom;
   const username = socket.username;
-
-
   const videoFile = socket.sessionTitle;
   const userToken = socket.token;
-  console.log(videoFile);
+  console.log(`User ${username} has joined session titled ${videoFile}.`);
 
   socket.join(room);
 
@@ -153,7 +151,7 @@ io.on("connection", (socket) => {
 
  
   socket.on("RECORDING_END_EVENT", () => {
-    console.log("File Receiving End")
+    console.log(`[${new Date().toLocaleString()}] Step 1: File Received from FrontEnd`)
     if (dataChunks[username] && dataChunks[username].length) {
       saveData(dataChunks[username], videoFile, room,userToken);
       dataChunks[username] = [];

@@ -1,10 +1,12 @@
 #!/bin/bash
 
 # Set S3 credentials
-export AWS_ACCESS_KEY_ID=AKIAQEJMKN4KXVZAIPO2
-export AWS_SECRET_ACCESS_KEY=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
-export AWS_BUCKET_NAME=notary-session
+export AWS_ACCESS_KEY_ID=${process.env.AWS_ACCESS_KEY_ID}
+export AWS_SECRET_ACCESS_KEY=${process.env.AWS_SECRET_ACCESS_KEY}
+export AWS_BUCKET_NAME='notary-session'
 export AWS_REGION='eu-west-2'
+
+
 
 # Upload file to S3
 aws s3 cp "C:/Users/LENOVO/Downloads/video/design_concept-1681538243877.mp4" "s3://${AWS_BUCKET_NAME}/"

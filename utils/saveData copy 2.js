@@ -12,6 +12,13 @@ const s3 = new AWS.S3({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 });
 
+const getEstimatedConversionTime = (fileSize) => {
+  const bytesPerSecond = 500 * 1024; // 500 kbps
+  const estimatedTimeInSeconds = fileSize / bytesPerSecond;
+  const minutes = Math.floor(estimatedTimeInSeconds / 60);
+  const seconds = Math.round(estimatedTimeInSeconds % 60);
+  return `${minutes} minutes ${seconds} seconds`;
+};
 export const saveData = async (data, videoFile, schedule_id, token) => {
   const fileName = `${videoFile}-${Date.now()}.mp4`;
 
@@ -34,54 +41,40 @@ export const saveData = async (data, videoFile, schedule_id, token) => {
         return;
       }
       const fileUrl = data.Location;
-      console.log(`Step 2: Temp File ${fileName} uploaded to S3`);
+      console.log(`[${new Date().toLocaleString()}] Step 2: Temp File ${fileName} uploaded to S3`);
+
+      // Get file size
+      const fileSize = videoBlob.size;
+      console.log(`[${new Date().toLocaleString()}] Step 2a: File size is ${fileSize} bytes`);
 
       // Convert the video and save to S3
+      const startTime = new Date();
       const command = ffmpeg()
         .input(fileUrl)
         .outputOptions([
-          // "-c:v",
-          // "libvpx-vp9",
-          // "-crf",
-          // "30",
-          // "-b:v",
-          // "500k",
-          // "-vf",
-          // "scale=640:360",
-          // "-c:a",
-          // "libopus",
-          // "-b:a",
-          // "96k",
-          // "-f",
-          // "webm",
-          // "-preset",
-          // "ultrafast",
-          "-c:v", "libx264","-profile:v",
-          "baseline",
-          "-level",
-          "3.0",
-          "-b:v","500k",
-          "-maxrate",
+          "-c:v",
+          "libvpx-vp9",
+          "-crf",
+          "30",
+          "-b:v",
           "500k",
-          "-bufsize",
-          "1000k",
           "-vf",
-          "scale=640:-2",
+          "scale=640:360",
           "-c:a",
-          "aac",
+          "libopus",
           "-b:a",
-          "128k",
-          "-movflags",
-          "+faststart",
-          "-metadata",
-          "rotate=0"
+          "96k",
+          "-f",
+          "webm",
+          "-preset",
+          "ultrafast",
         ])
-        .toFormat("mp4")
+        .toFormat("webm")
         .on("error", function (err) {
-          console.log(`*** ${fileName}: ${err}`);
+          console.log(`[${new Date().toLocaleString()}] *** ${fileName}: ${err}`);
         })
         .on("end", async function () {
-          console.log(`Step 3: Temp File ${fileName} converted and saved to S3`);
+          console.log(`[${new Date().toLocaleString()}] Step 3: Temp File ${fileName} converted and saved to S3`);
 
           // Delete the original video from S3
           await s3
@@ -91,16 +84,23 @@ export const saveData = async (data, videoFile, schedule_id, token) => {
             })
             .promise();
 
-          console.log(`Step 4: Temp File ${fileName} deleted from S3`);
+          console.log(`[${new Date().toLocaleString()}] Step 4: Temp File ${fileName} deleted from S3`);
 
           // Perform any additional processing or save to database
           const newFileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/converted_${fileName}`;
           saveToDB(schedule_id, newFileUrl, token);
-          console.log(`Step 5: Final File URL: ${newFileUrl}`);
+          console.log(`[${new Date().toLocaleString()}] Step 5: Final File URL: ${newFileUrl}`);
+
+          // Get conversion time
+          const endTime = new Date();
+          const conversionTime = (endTime - startTime) / 1000;
+          
+          
+          console.log(`[${new Date().toLocaleString()}] Step 5a: Conversion time was ${conversionTime} seconds`);
         });
 
       command.on("error", function (err) {
-        console.log(`*** ${fileName}: ${err}`);
+        console.log(`[${new Date().toLocaleString()}] *** ${fileName}: ${err}`);
       });
 
       const uploadParams = {
@@ -113,14 +113,17 @@ export const saveData = async (data, videoFile, schedule_id, token) => {
       const s3Upload = s3.upload(uploadParams);
       s3Upload.send((err) => {
         if (err) {
-          console.log(`*** ${fileName}: ${err}`);
+          console.log(`[${new Date().toLocaleString()}] *** ${fileName}: ${err}`);
         }
       });
     });
   } catch (e) {
-    console.log(`*** ${fileName}: ${e}`);
+    console.log(`[${new Date().toLocaleString()}] *** ${fileName}: ${e}`);
   }
 };
+
+
+
 
 const saveToDB = (schedule_id, video_link, token) => {
 

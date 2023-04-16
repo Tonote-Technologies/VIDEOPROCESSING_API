@@ -11,6 +11,9 @@
   "author": "abiodun samuel",
   "license": "ISC",
   "devDependencies": {
+    "@types/ffprobe": "^1.1.4",
+    "@types/ffprobe-static": "^2.0.1",
+    "@types/fluent-ffmpeg": "^2.1.21",
     "nodemon": "^2.0.19"
   },
   "dependencies": {
@@ -29,6 +32,8 @@
     "express-rate-limit": "^6.5.2",
     "express-session": "^1.17.3",
     "fetch-blob": "^3.2.0",
+    "ffprobe": "^1.1.2",
+    "ffprobe-static": "^3.1.0",
     "fluent-ffmpeg": "^2.1.2",
     "handlebars": "^4.7.7",
     "joi": "^17.6.0",

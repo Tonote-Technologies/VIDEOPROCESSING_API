@@ -35,6 +35,8 @@
     "ffprobe": "^1.1.2",
     "ffprobe-static": "^3.1.0",
     "fluent-ffmpeg": "^2.1.2",
+    "handbrake-js": "^6.0.0",
+    "handbrake-js-npm": "^6.0.0",
     "handlebars": "^4.7.7",
     "joi": "^17.6.0",
     "jose": "^4.11.4",
@@ -46,6 +48,7 @@
     "passport": "^0.6.0",
     "passport-google-oauth20": "^2.0.0",
     "socket.io": "^4.6.0",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "video-encoder": "^0.0.2"
   }
 }

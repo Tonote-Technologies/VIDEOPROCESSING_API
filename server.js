@@ -141,8 +141,8 @@ io.on("connection", (socket) => {
   });
 
   
-  socket.on('VIDEO_SING_REQUEST_SENT', () => {
-    socket.to(room).emit('VIDEO_SING_REQUEST_SENT');
+  socket.on('VIDEO_SIGN_REQUEST_SENT', () => {
+    socket.to(room).emit('VIDEO_SIGN_REQUEST_SENT');
   });
 
 

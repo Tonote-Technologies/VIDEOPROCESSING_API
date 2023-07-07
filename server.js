@@ -140,8 +140,14 @@ io.on("connection", (socket) => {
     socket.to(room).emit(events.REMOVE, data);
   });
 
+  
+  socket.on('VIDEO_SING_REQUEST_SENT', () => {
+    socket.to(room).emit('VIDEO_SING_REQUEST_SENT');
+  });
+
+
   socket.on("RECORDING_CHUNK_EVENT", (data) => {
-    // console.log('File Received', data)
+    console.log('File Received', data)
     if (dataChunks[username]) {
       dataChunks[username].push(data);
     } else {

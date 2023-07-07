@@ -12,7 +12,6 @@ const s3 = new AWS.S3({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 });
 
-
 export const saveData = async (data, videoFile, schedule_id, token) => {
   const fileName = `${videoFile}-${Date.now()}.mp4`;
 
@@ -43,6 +42,7 @@ export const saveData = async (data, videoFile, schedule_id, token) => {
 
       // Convert the video and save to S3
       const startTime = new Date();
+      
       const command = ffmpeg()
         .input(fileUrl)
         .outputOptions([
@@ -131,7 +131,7 @@ const saveToDB = (schedule_id, video_link, token) => {
 
 }
 
+// ffmpeg -i https://tonote-storage.s3.amazonaws.com/converted_affidavit_of_good_conduct-1683284839074.mp4 -c:v libx264 -c:a aac output.mp4
 
 
 // ffmpeg -i https://notary-session.s3.amazonaws.com/design_concept-1681538243877.mp4 -c:v libvpx-vp9 -crf 30 -b:v 500k -vf scale=640:360 -c:a libopus -b:a 96k -f webm -preset ultrafast output.webm
-

@@ -89,7 +89,9 @@ const socketByUser = {};
 const dataChunks = {};
 
 io.use((socket, next) => {
-  const { username, token, sessionRoom, sessionTitle } = socket.handshake.auth;
+  console.log(socket.handshake.auth);
+  const { username, token, 
+    sessionRoom, sessionTitle } = socket.handshake.auth;
  
   if (!username && !sessionRoom && !token) {
     return next(new Error("invalid username and SessionRoom"));
@@ -108,7 +110,7 @@ io.on("connection", (socket) => {
   const username = socket.username;
   const videoFile = socket.sessionTitle;
   const userToken = socket.token;
-  console.log(`User ${username} has joined session titled.`);
+  console.log(`User ${username} has joined session titled ${userToken}.`);
 
   socket.join(room);
 

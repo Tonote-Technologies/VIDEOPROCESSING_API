@@ -146,8 +146,8 @@ io.on("connection", (socket) => {
   
   socket.on('request_sent', (data) => {
     console.log('A request has been sent', data)
-    socket.to(room).emit('request_sent', data);
-    // io.in(room).emit("VIDEO_SIGN_REQUEST_SENT", data);
+    // socket.to(room).emit('request_sent', data);
+    io.in(room).emit("VIDEO_SIGN_REQUEST_SENT", data);
   });
 
 

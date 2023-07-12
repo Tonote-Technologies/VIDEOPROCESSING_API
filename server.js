@@ -144,8 +144,10 @@ io.on("connection", (socket) => {
   });
 
   
-  socket.on('VIDEO_SIGN_REQUEST_SENT', () => {
-    socket.to(room).emit('VIDEO_SIGN_REQUEST_SENT');
+  socket.on('VIDEO_SIGN_REQUEST_SENT', (data) => {
+    console.log('A request has been sent', data)
+    socket.to(room).emit('VIDEO_SIGN_REQUEST_SENT', data);
+    // io.in(room).emit("VIDEO_SIGN_REQUEST_SENT", data);
   });
 
 

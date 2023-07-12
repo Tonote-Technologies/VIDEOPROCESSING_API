@@ -108,7 +108,7 @@ io.on("connection", (socket) => {
   const username = socket.username;
   const videoFile = socket.sessionTitle;
   const userToken = socket.token;
-  console.log(`User ${username} has joined session titled ${videoFile}.`);
+  console.log(`User ${username} has joined session titled.`);
 
   socket.join(room);
 

@@ -145,8 +145,8 @@ io.on("connection", (socket) => {
   socket.on('request_sent', (data) => {
     const currentTime = new Date().toLocaleTimeString(); // Get current time
     console.log(`[${currentTime}] A request has been sent`, data);
-    socket.to(room).emit('request_sent', data);
-    // io.in(room).emit("request_sent", data);
+    // socket.to(room).emit('request_sent', data);
+    io.in(room).emit("request_sent", data);
   });
 
 

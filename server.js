@@ -27,6 +27,7 @@ import apiRoutes from "./routes/apiRoutes.js";
 // import { onConnection } from "./events/onConnection.js";
 import { socketCorsOption } from "./config/corsOptions.js";
 import { saveData } from "./utils/saveData.js";
+import {generatePDFAndSendEmail} from "./utils/generatePDFAndSendEmail.js";
 import { events } from "./utils/constant.js";
 import moment from "moment";
 const dateTime = () => {
@@ -87,9 +88,11 @@ app.all("*", (req, res) => {
 // socket events
 const socketByUser = {};
 const dataChunks = {};
+const currentTime = new Date().toLocaleTimeString(); // Get current time
+
 
 io.use((socket, next) => {
-  console.log(socket.handshake.auth);
+  // console.log(socket.handshake.auth);
   const { username, token, 
     sessionRoom, sessionTitle } = socket.handshake.auth;
  
@@ -111,7 +114,7 @@ io.on("connection", (socket) => {
   const videoFile = socket.sessionTitle;
   const userToken = socket.token;
   // console.log(`User ${username} has joined session titled ${room}.`);
-  console.log(`User ${username} has joined session.`);
+  console.log(`[${currentTime}] ${username} has joined session.`);
 
   socket.join(room);
 
@@ -169,6 +172,12 @@ io.on("connection", (socket) => {
       dataChunks[username] = [];
       
     }
+  });
+
+  socket.on("generate_pdf_send_mail", (data) => {
+    console.log('generate pdf and send mail', data)
+    generatePDFAndSendEmail()
+    
   });
 
   socket.on("RECORDING_START_SOUND", () => {

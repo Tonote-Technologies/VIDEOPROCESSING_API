@@ -122,8 +122,6 @@ io.on("connection", (socket) => {
     message: `Name:${socket.username} has joined the session, Room:${room}`,
   });
 
- 
-
   socket.on(events.NOTARY_AVAILABLE, (data) => {
     socket.to(room).emit(events.NOTARY_AVAILABLE, data);
   });
@@ -151,7 +149,8 @@ io.on("connection", (socket) => {
     const currentTime = new Date().toLocaleTimeString(); // Get current time
     console.log(`[${currentTime}] A request has been sent`, data);
     // socket.to(room).emit('request_sent', data);
-    io.in(room).emit("request_sent", data);
+    // io.in(room).emit("request_sent", data);
+    io.emit('request_sent', data);
   });
 
 
@@ -218,6 +217,9 @@ io.on("connection", (socket) => {
   });
 });
 
+io.on("connection", (socket) => {
+
+})
 httpServer.listen(process.env.PORT, () => {
   console.log("Connected to MongoDB");
   console.log(`Server running on port ${process.env.PORT}`);

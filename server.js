@@ -122,6 +122,7 @@ io.on("connection", (socket) => {
     message: `Name:${socket.username} has joined the session, Room:${room}`,
   });
 
+  
   socket.on(events.NOTARY_AVAILABLE, (data) => {
     socket.to(room).emit(events.NOTARY_AVAILABLE, data);
   });
@@ -152,6 +153,13 @@ io.on("connection", (socket) => {
     // io.in(room).emit("request_sent", data);
     io.emit('request_sent', data);
   });
+  socket.on('close_field', (data) => {
+    const currentTime = new Date().toLocaleTimeString(); // Get current time
+    console.log(`[${currentTime}] Field closed`, data);
+    // socket.to(room).emit('close_field', data);
+    io.emit('close_field', data);
+  });
+  
 
 
   socket.on("RECORDING_CHUNK_EVENT", (data) => {

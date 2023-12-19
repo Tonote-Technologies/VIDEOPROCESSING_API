@@ -141,9 +141,9 @@ io.on("connection", (socket) => {
 		socket.to(room).emit(events.REMOVE, data);
 	});
 
-	socket.on(events.UPDATE_DOCUMENT_DISPLAYED, (data) => {
+	socket.on("UPDATE_DOCUMENT_DISPLAYED", (data) => {
 		console.log(data);
-		socket.to(room).emit(events.UPDATE_DOCUMENT_DISPLAYED, data);
+		socket.to(room).emit("UPDATE_DOCUMENT_DISPLAYED", data);
 	});
 
 	socket.on("request_sent", (data) => {

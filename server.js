@@ -142,8 +142,8 @@ io.on("connection", (socket) => {
 	});
 
 	socket.on("UPDATE_DOCUMENT_DISPLAYED", (data) => {
-		console.log(data);
-		socket.to(room).emit("UPDATE_DOCUMENT_DISPLAYED", data);
+		// console.log(data);
+		io.emit("UPDATE_DOCUMENT_DISPLAYED", data);
 	});
 
 	socket.on("request_sent", (data) => {

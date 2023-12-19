@@ -142,7 +142,7 @@ io.on("connection", (socket) => {
 	});
 
 	socket.on("UPDATE_DOCUMENT_DISPLAYED", (data) => {
-		// console.log(data);
+		console.log(data);
 		socket.to(room).emit("UPDATE_DOCUMENT_DISPLAYED", data);
 	});
 

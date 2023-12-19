@@ -1,4 +1,4 @@
-import puppeteer from 'puppeteer';
+// import puppeteer from 'puppeteer';
 import nodemailer from 'nodemailer';
 
 export const generatePDFAndSendEmail = async () => {

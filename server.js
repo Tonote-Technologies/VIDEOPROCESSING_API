@@ -143,6 +143,7 @@ io.on("connection", (socket) => {
 	socket.on("NOTARY_NEW_REQUEST", (data) => {
 		// socket.to(room).emit(events.NOTARY_NEW_REQUEST);
 		io.emit("NOTARY_NEW_REQUEST", data);
+		console.log(data);
 	});
 	socket.on(events.REMOVE, (data) => {
 		socket.to(room).emit(events.REMOVE, data);
